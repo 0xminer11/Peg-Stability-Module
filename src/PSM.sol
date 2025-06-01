@@ -4,20 +4,20 @@ import "./Stablecoin.sol";
 import "lib/openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol";
 contract psm is OwnableUpgradeable{
 
-Stablecoin public immutable stable;
-Stablecoin public immutable underlying;
+Stablecoin public stable;
 
-uint256 public immutable DECIMAL_DIFF;
+Stablecoin public underlying;
+
+uint256 public DECIMAL_DIFF;
 
 error NotEnoughLiquidity(address contractAddress,uint256 StableLiquidity, uint256 stableAmount);
 
-constructor(address _stable, address _underlaying){
+function initialize(address _stable, address _underlaying) initializer public{
     stable = Stablecoin(_stable);
     underlying = Stablecoin(_underlaying);
-
+    __Ownable_init(msg.sender);
     DECIMAL_DIFF =10 ** (stable.decimals() -Stablecoin(underlying).decimals());
 }
-
 
 function mint(address _to,uint256 _underlyingAmount) external returns (uint256 stableAmount){
     uint256 balance = underlying.balanceOf(address(this));
